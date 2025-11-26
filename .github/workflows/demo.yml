@@ -1,33 +1,43 @@
 name: Demo pipeline
-
 on:
   push:
-     branches:
-       - main
-       - dev
+    branches:
+      - main
+      - dev
   pull_request:
     branches: [main, dev]
-
+    
 jobs:
-
-   setup_jobs:
-     runs-on: ubuntu-latest # macos-latest, window-latest 
-     steps:
-       - name: Checkout code
-         uses: actions/checkout@v3
-       - name: create file
-         run: touch github-action.txt
-       - name: print hello world
-         run: echo Hello world
-       - name: display readme file
-         run: cat README.md
-
-   build_job:
-    runs-on: windows-latest
-    steps:
-      - name: display hello
-        run: echo hello
-   deploy_jobs:
-     runs-on: macos-latest
-     steps:
-       - run: echo hello mac
+    setup-job:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+            - name: Create file
+              run:  |
+                 touch github-action.txt
+                 ls -la
+                 echo "Hello World!"
+                 cat README.md 
+            
+              
+    
+    builds-job:
+        needs: 
+            - setup-job
+        runs-on: ubuntu-latest
+        steps:
+            - name: displayhello world
+              run: echo "Hello from windows"
+            
+            - name: display github-action file
+              run: cat github-action.txt
+             
+              
+            
+    deploy-job:
+        needs: builds-job
+        runs-on: macos-latest
+        steps:
+            - name: display hello world
+              run: echo "Hello from mac"
